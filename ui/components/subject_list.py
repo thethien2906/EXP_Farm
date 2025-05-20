@@ -2,12 +2,13 @@ from PyQt6.QtWidgets import (QDialog, QWidget, QVBoxLayout, QLabel, QListWidget,
                              QListWidgetItem, QPushButton, QMessageBox)
 from PyQt6.QtCore import Qt, pyqtSignal
 from core.subject_manager import SubjectManager
-from ui.components.subject_dialog import AddSubjectDialog
+from .subject_item_widget import SubjectItemWidget
 
 
 class SubjectList(QListWidget):
     # Define a signal that will be emitted when a subject is selected
     subject_selected = pyqtSignal(str)
+    add_subject_clicked = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -15,89 +16,95 @@ class SubjectList(QListWidget):
         # Subject manager initialize
         self.subject_manager = SubjectManager()
 
-        self.init_ui()
+        self.setup_ui()
 
         self.load_subjects()
 
-    def init_ui(self):
-        """Initialize UI components"""
+    def setup_ui(self):
+        """Set up List"""
         layout = QVBoxLayout(self)
 
-        # Header label
-        header = QLabel("YOUR SKILLS")
+        # Header
+        header = QLabel("SKILLS")
         header.setStyleSheet("font-weight: bold; font-size: 16px;")
         layout.addWidget(header)
 
-        # Subject list widget
+        # Subject list
         self.list_widget = QListWidget()
         self.list_widget.setSelectionMode(QListWidget.SelectionMode.SingleSelection)
-        self.list_widget.itemClicked.connect(self.on_subject_selected)
+        self.list_widget.setStyleSheet("""
+                    QListWidget {
+                        border: none;
+                        background-color: #2b2b2b;
+                    }
+                    QListWidget::item {
+                        border-bottom: 1px solid #3a3a3a;
+                        padding: 2px;
+                    }
+                    QListWidget::item:selected {
+                        background-color: #3a3a3a;
+                    }
+                """)
+
+        # Signal hearing
+        self.list_widget.itemClicked.connect(self.on_item_clicked)
         layout.addWidget(self.list_widget)
 
-        # Add new subject button
-        add_button = QPushButton("+ Add New Subject")
-        add_button.clicked.connect(self.on_add_subject_clicked)
-        layout.addWidget(add_button)
-
-        self.setLayout(layout)
+        # Add button
+        self.add_button = QPushButton("+ Add New Subject")
+        self.add_button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #4a4a4a;
+                        color: white;
+                        border: none;
+                        padding: 8px;
+                        border-radius: 2px;
+                    }
+                    QPushButton:hover {
+                        background-color: #5a5a5a;
+                    }
+                """)
+        self.add_button.clicked.connect(self.on_add_button_clicked)
+        layout.addWidget(self.add_button)
 
     def load_subjects(self):
-        """Load all subjects from the database and display"""
-
-        # Clear memory
+        """Load data"""
         self.list_widget.clear()
 
-        # Get subjects
         subjects = self.subject_manager.get_all_subjects()
 
-        # Process items
+        # Add each subject to list
         for subject in subjects:
             item = QListWidgetItem()
-            display_text = f"{subject.icon} {subject.name}" if subject.icon else subject.name
-            item.setText(display_text)
-            item.setData(Qt.ItemDataRole.UserRole, subject.name)
+            item.setSizeHint(SubjectItemWidget.get_size_hint())
             self.list_widget.addItem(item)
+            widget = SubjectItemWidget(subject)
+            self.list_widget.setItemWidget(item, widget)
 
-    def on_subject_selected(self, item):
-        """Handle subject selection in the list"""
-        subject_name = item.data(Qt.ItemDataRole.UserRole)
-        self.subject_selected.emit(subject_name)
+    def on_item_clicked(self, item):
+        """Handle item selection"""
+        widget = self.list_widget.itemWidget(item)
+        # Emit subject selected signal
+        self.subject_selected.emit(widget.subject.name)
 
-    def on_add_subject_clicked(self):
-        """Handle add subject button click"""
-        dialog = AddSubjectDialog(self)
-
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            # Get the data from the dialog
-            subject_data = dialog.get_subject_data()
-
-            # Validate the subject name
-            if not subject_data["name"]:
-                QMessageBox.warning(self, "Invalid Input", "Subject name cannot be empty!")
-                return
-
-            try:
-                # Create the new subject
-                new_subject = self.subject_manager.create_subject(
-                    name=subject_data["name"],
-                    icon=subject_data["icon"]
-                )
-
-                # Refresh the subject list
-                self.load_subjects()
-
-                # Select the new subject
-                for i in range(self.list_widget.count()):
-                    item = self.list_widget.item(i)
-                    if item.data(Qt.ItemDataRole.UserRole) == new_subject.name:
-                        self.list_widget.setCurrentItem(item)
-                        self.on_subject_selected(item)
-                        break
-
-            except ValueError as e:
-                # Handle the case where the subject already exists
-                QMessageBox.warning(self, "Error", str(e))
+    def on_add_button_clicked(self):
+        """handle add button click"""
+        # Emit the signal only
+        self.add_subject_clicked.emit()
 
     def refresh(self):
-        """Refresh the subject list from the database"""
+        """Refresh the list"""
         self.load_subjects()
+
+    def select_subject(self, subject_name):
+        """Choose the given subject by name"""
+        for i in range(self.list_widget.count()):
+            item = self.list_widget.item(1)
+            widget = self.list_widget.itemWidget(item)
+
+            if widget.subject.name == subject_name:
+                # Select this item
+                self.list_widget.setCurrentItem(item)
+                # Emit signal
+                self.subject_selected.emit(subject_name)
+                break

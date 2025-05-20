@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QListWidget, QListWidgetItem, QPushButton,
                              QProgressBar, QFrame, QSplitter)
 from PyQt6.QtCore import Qt, QSize
+from ui.components.subject_list import SubjectList
 
 
 class MainWindow(QMainWindow):

@@ -1,3 +1,4 @@
+# core/session_manager.py
 import time
 from .exp_engine import calculate_base_exp, apply_streak_bonus
 from utils.time_helpers import seconds_to_human_readable

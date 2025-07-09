@@ -1,3 +1,4 @@
+# ui/components/subject_item_widget.py
 from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QProgressBar
 from PyQt6.QtCore import Qt, pyqtSignal, QSize
 

@@ -1,3 +1,4 @@
+# ui/components/subject_list.py
 from PyQt6.QtWidgets import (QDialog, QWidget, QVBoxLayout, QLabel, QListWidget,
                              QListWidgetItem, QPushButton, QMessageBox)
 from PyQt6.QtCore import Qt, pyqtSignal

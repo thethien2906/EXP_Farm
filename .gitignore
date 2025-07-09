@@ -32,3 +32,6 @@ env/
 *.bak
 *.swp
 *.tmp
+
+# context
+/context

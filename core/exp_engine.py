@@ -1,3 +1,4 @@
+# core/exp_engine.py
 TIER_1_DURATION = 1800  # 30 minutes in seconds
 TIER_2_DURATION = 3600  # 60 minutes in seconds
 

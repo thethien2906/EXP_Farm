@@ -1,3 +1,4 @@
+# ui/components/subject_dialog.py
 from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QComboBox, QDialogButtonBox)
 from PyQt6.QtCore import Qt

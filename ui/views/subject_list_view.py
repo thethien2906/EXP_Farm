@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QLabel,
                              QListWidget, QPushButton)
 from PyQt6.QtCore import pyqtSignal
 
+
 class SubjectListView(QWidget):
     """
     Left pane
@@ -50,9 +51,8 @@ class SubjectListView(QWidget):
         if subject_name:
             self.subjectSelected.emit(subject_name)
 
-
     # Public method for controller
-    def populate_subjects(self,subjects: list):
+    def populate_subjects(self, subjects: list):
         """
         AppLogic controller will call to fill the list with subject names
         :param subjects: Subject item list

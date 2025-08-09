@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QProgressBar, QPushButton, QFrame)
 from PyQt6.QtCore import pyqtSignal, Qt
 
+
 class ProgressionView(QWidget):
     """
     Top-right section of the UI
@@ -105,7 +106,7 @@ class ProgressionView(QWidget):
             self.exp_progress_bar.setFormat("Select a Subject")
             self.start_stop_button.setEnabled(False)
 
-    def set_session_active(self, active:bool):
+    def set_session_active(self, active: bool):
         """
         Changes the state of view
         :param active: True if session is running, False if session is offline
@@ -121,13 +122,12 @@ class ProgressionView(QWidget):
         # Re-apply stylesheet for object name changes
         self.style().polish(self.start_stop_button)
 
-
     def update_session_progress(self, progress_data: dict):
         """
         Updates with new data from ongoing session
         :param progress_data: duration and current_exp
         :return: None
         """
-        duration = progress_data.get('duration_human','0s')
+        duration = progress_data.get('duration_human', '0s')
         exp = progress_data.get('current_exp', 0)
         self.exp_progress_bar.setFormat(f"{duration} | +{exp:,} EXP")

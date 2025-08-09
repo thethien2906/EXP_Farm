@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt
 from data.models import Subject # Import the Subject class for type hinting
 import datetime
 
+
 class StatisticsView(QWidget):
     """
     Bottom-right section, display key stats of selected subject

@@ -5,6 +5,8 @@ from core.session_manager import SessionManager
 from ui.views.subject_list_view import SubjectListView
 from ui.views.progression_view import ProgressionView
 from ui.views.statistics_view import StatisticsView
+from ui.views.add_subject_dialog import AddSubjectDialog
+from PyQt6.QtWidgets import QDialog
 
 class AppLogic(QObject):
     """
@@ -41,6 +43,7 @@ class AppLogic(QObject):
 
         # --- Connect Signals ---
         self.subject_list_view.subjectSelected.connect(self._on_subject_selected)
+        self.subject_list_view.addSubjectClicked.connect(self._on_add_subject_clicked)
         self.progression_view.startClicked.connect(self._on_start_session)
         self.progression_view.stopClicked.connect(self._on_stop_session)
         self.subjectUpdated.connect(self.progression_view.update_view)
@@ -70,13 +73,29 @@ class AppLogic(QObject):
         # Emit subjectUpdated signal to update UI
         self.subjectUpdated.emit(subject)
 
+    def _on_add_subject_clicked(self):
+        """
+        handles signal for Add new subject button click
+        :return:
+        """
+        dialog = AddSubjectDialog()
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            name, icon = dialog.get_subject_data()
+            if name:
+                try:
+                    self.subject_manager.create_subject(name, icon)
+                    self.load_initial_data()
+                except ValueError as e:
+                    print(f"Error creating subject: {e}")
     def _on_start_session(self):
         """
         Handles the event when the start button is clicked
         :return:
         """
-        selected_subject_name = self.subject_list_view.subjects_list.currentItem()
-        if selected_subject_name:
+        selected_item = self.subject_list_view.subjects_list.currentItem()
+        if selected_item:
+            # Get Subject name from item object
+            selected_subject_name = selected_item.text()
             # Start new session
             self.session_manager.start_session(selected_subject_name)
             # Set session with "Active" status
@@ -98,8 +117,10 @@ class AppLogic(QObject):
         # Hot reload subjects
         self.subject_manager.refresh_subjects()
         # Get current selected subject
-        selected_subject_name = self.subject_list_view.subjects_list.currentItem()
-        if selected_subject_name:
+        selected_item = self.subject_list_view.subjects_list.currentItem()
+        if selected_item:
+            # Get Subject name from item object
+            selected_subject_name = selected_item.text()
             # Retrieve subject
             subject = self.subject_manager.get_subject_by_name(selected_subject_name)
             # Emit subjectUpdated signal

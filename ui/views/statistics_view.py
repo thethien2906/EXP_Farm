@@ -59,7 +59,7 @@ class StatisticsView(QWidget):
             # Update last session date
             if subject.last_session_date:
                 # Convert to different format
-                last_date = datetime.date.fromtimestamp(subject.last_session_date)
+                last_date = datetime.date.fromtimestamp(float(subject.last_session_date))
                 today = datetime.date.today()
                 yesterday = today - datetime.timedelta(days=1)
 

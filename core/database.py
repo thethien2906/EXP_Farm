@@ -4,7 +4,7 @@ import sqlite3
 import os
 from pathlib import Path
 from data.models import Subject
-
+import time
 
 def get_database_path():
     """Return the path where the database should be stored"""
@@ -245,8 +245,15 @@ def calculate_current_streak(subject_name):
         conn.close()
         return 1
 
+    try:
+        timestamp = float(last_session_date)
+    except (ValueError, TypeError):
+        # If the date is invalid, we can't calculate a streak. Reset to 1.
+        conn.close()
+        return 1
+
     # Convert stored timestamp to date
-    last_session_datetime = datetime.fromtimestamp(last_session_date)
+    last_session_datetime = datetime.fromtimestamp(timestamp)
     last_session_day = last_session_datetime.date()
     today = datetime.now().date()
 

@@ -12,8 +12,10 @@ class SubjectListView(QWidget):
     """
 
     # --- Custom Signal ---
+    # Subject selected signal
     subjectSelected = pyqtSignal(str)
-
+    # Add subject signal
+    addSubjectClicked = pyqtSignal()
     def __init__(self):
 
         # Parent constructor
@@ -27,7 +29,7 @@ class SubjectListView(QWidget):
         self.subjects_list = QListWidget()
         # Add Button
         self.add_subject_btn = QPushButton("Add New Subject")
-
+        self.add_subject_btn.setObjectName("PrimaryButton")
         # --- Set up Layout ---
         # Vertical Layout
         main_layout = QVBoxLayout()
@@ -40,6 +42,7 @@ class SubjectListView(QWidget):
 
         # --- Configure Signals ---
         self.subjects_list.currentTextChanged.connect(self._on_subject_selected)
+        self.add_subject_btn.clicked.connect(self.addSubjectClicked.emit)
 
     # Receive signal from subjects_list
     def _on_subject_selected(self, subject_name: str):

@@ -122,6 +122,7 @@ from .views.statistics_view import StatisticsView
 # Controller
 from .app_logic import AppLogic
 
+
 class MainWindow(QMainWindow):
     """
     Main UI

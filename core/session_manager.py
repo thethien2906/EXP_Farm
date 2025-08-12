@@ -56,11 +56,12 @@ class SessionManager:
         bonus_percentage = round((bonus_exp / base_exp * 100)) if base_exp > 0 else 0
 
         # Streak logic - only increment if this is a new day
-        streak_before = self.current_session['streak_days']
-        if self.session_is_on_new_day():
-            new_streak = streak_before + 1
-        else:
-            new_streak = streak_before
+        # streak_before = self.current_session['streak_days']
+        # if self.session_is_on_new_day():
+        #     new_streak = streak_before + 1
+        # else:
+        #     new_streak = streak_before
+        new_streak = self.current_session['streak_days']
 
         # Prepare results
         results = {
@@ -109,10 +110,14 @@ class SessionManager:
         if not current_subject or not current_subject.last_session_date:
             # No previous session, so this counts as a new day
             return True
-
+        try:
+            timestamp = float(current_subject.last_session_date)
+        except (ValueError, TypeError):
+            # If the date is invalid, treat it as the first session.
+            return True
         # Compare session start date with last session date
         session_start_date = datetime.fromtimestamp(self.current_session['start_time']).date()
-        last_session_date = datetime.fromtimestamp(current_subject.last_session_date).date()
+        last_session_date = datetime.fromtimestamp(timestamp).date()
 
         return session_start_date > last_session_date
 
